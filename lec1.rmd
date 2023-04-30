@@ -1,0 +1,197 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+a = 4
+b = 5
+res<-(a + b)
+res
+```
+```{r}
+miStr = 'Hola a todos'
+class(miStr)
+```
+```{r}
+miBool = F
+class(miBool)
+```
+```{r}
+miNum = 5.5
+class(miNum)
+```
+```{r}
+miNum2 = 5
+class(miNum2)
+```
+```{r}
+#esto es un comentario.
+miInt = 564456L
+class(miInt)
+```
+
+###Coerción de Datos
+
+```{r}
+a = 5
+b = 'a'
+res = a + b
+```
+```{r}
+a = 10
+b = 'hola'
+paste(a, b)
+```
+```{r}
+a = TRUE
+b = 'hola'
+paste(a, b)
+```
+```{r}
+a = TRUE
+b = 10
+a + b
+```
+
+### Arreglos (colecciones)
+```{r}
+miArr = c(10, 20, 30, 40, 50)
+miArr
+```
+```{r}
+#los arreglos inician a indexarse en uno (1)
+miArr[1]
+```
+```{r}
+#sub-arreglos con limite superir inclusivo.
+miArr[2:5]
+```
+```{r}
+miArr = c(miArr, 100, 2000, 6333)
+miArr
+```
+```{r}
+arr.Datos = round(runif(100, 50, 70), 0)
+arr.Datos
+```
+
+```{r}
+arr.Datos[78]
+```
+
+```{r}
+arr = c(20, 63, 58, 'Hola', TRUE, FALSE)
+arr
+```
+```{r}
+arr = c(20, 36, 25, 14, TRUE, FALSE, TRUE)
+arr
+```
+```{r}
+arr = c(20, 36, 25, 14, TRUE, FALSE, TRUE)
+sum(arr)
+```
+```{r}
+sum(arr.Datos > 65)
+```
+```{r}
+arr = c(50, 60, 78)
+arr[arr >= 60] #filtro.
+```
+```{r}
+arr = round(rnorm(n=50, mean=10, sd=5))
+arr
+```
+```{r}
+print(paste("Meadia:", mean(arr)))
+print(paste("Meadiana:",median(arr)))
+print(paste("Varianza:",var(arr)))
+print(paste("Desviación:",sd(arr)))
+print(paste("Mínimo:",min(arr)))
+print(paste("Máximo:",max(arr)))
+print(paste("Suma:", sum(arr)))
+print(paste("Producto:", prod(arr)))
+```
+
+##Listas
+```{r}
+miLista = list(52, 
+               'Hola', 
+               c(35, 23, 56),
+               c(TRUE, FALSE, TRUE, TRUE))
+miLista
+```
+
+```{r}
+miLista[[4]]
+```
+
+```{r}
+miLista[[2]]
+```
+```{r}
+datos = list(nombre='Preng',
+             apellido='Biba',
+             edad=31,
+             clases = c('Econometria en R', 'Statistical Learning I'))
+datos
+```
+```{r}
+datos[[1]]
+```
+```{r}
+datos$clases
+```
+```{r}
+datos$edad = datos$edad + 5
+datos
+```
+
+#Carnets
+```{r}
+ids = round(runif(100000, 1000, 9999), 0)
+ids
+```
+
+```{r}
+foo = function(x){
+  out = paste("2300", x, sep='')
+  return(out)
+}
+
+debug(foo) #iniciamos debugeo
+foo(4545)
+undebug(foo) #finalizamos debugeo
+```
+
+```{r}
+carnets = as.numeric(sapply(ids, foo))
+carnets
+```
+
+```{r}
+sqrt(10)
+```
+## DataFrames
+```{r}
+dataset = data.frame(cantidad = round(runif(100, 10, 100), 0),
+                     precio = rnorm(100, 50, 20),
+                     disponible = sample(c(T, F), 100, replace = T, prob = c(0.75, 0.25)))
+dataset
+```
+
+```{r}
+dataset[c(10, 52, 89), c(2, 3)]
+```
+```{r}
+filtro = ((dataset$cantidad > 70) & (dataset$disponible == FALSE))
+resumen = dataset[filtro, ] #filtro de tablas.
+```
+
+```{r}
+mean(resumen$precio)
+```
+
+
+## DPLYR 
