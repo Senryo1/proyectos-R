@@ -8,50 +8,64 @@ lintr(Laboratorio 1 R)
 1. ¿Cómo generaría un arreglo aleatorio de 250 elementos con los
 colores primarios?
 
+```{language}
 colores_primarios <- c("rojo", "azul", "amarillo")
 arreglo_colores <- sample(colores_primarios, 250, replace = TRUE)
 print(arreglo_colores)
+```
 
 
 2. Dado un arreglo de 120000 elementos de números enteros entre
 40 y 70, ¿Cómo haría para obtener la desviación estándar de
 aquellos números que son mayores a 55 y menores a 64?
 
+```{r}
 arreglo_numeros <- sample(40:70, 120000, replace = TRUE)
 arreglo_filtrado <- arreglo_aleatorio[arreglo_aleatorio > 55 & arreglo_aleatorio < 64]
 desviacion_estandar <- sd(arreglo_filtrado)
 print(desviacion_estandar)
+```
+
 
 3. Suponga que se almacena en una variable un arreglo con todos los números de carnet de los estudiantes del Instituto de
 Investigación de Operaciones de la universidad en forma de string, los carnets tiene al inicio dos caracteres que identifican el año en el que la persona entró a la universidad
 por ejemplo: 19004528 hacer referencia a una persona que ingreso en el año 2019, 06009878 hace referencia a una persona que ingreso que el año 2006, ¿Cómo haría para contar la cantidad
 de alumnos por año?
 
+```{r}
 carnets <- c("19004528", "06009878", "19123456", "07005678", "18009876")
 anios <- substr(carnets, start = 1, stop = 2)
 tabla_anios <- table(anios)
 print(tabla_anios)
+```
+
 
 4. Define el vector y = (1, 3, 5, 7) utilizando la función c().
 ¿Cómo lo harías con la función seq()?
 
+```{R}
 vector1 <- c(1,3,5,7)
 vectors <- seq(1,7,2)
 vectors
+```
+
 
 5. Si b <- list(a=1:10, c="Hola", d="XX"), escriba una expresión
 en R que devuelva todos los elementos de la lista excepto los
 elementos 4,6,7,8 del vector a.
 
+```{R}
 b = list(a=1:10, c="Hola", d="XX")
 b$a = b$a[-c(4,6:7)]
 print(b$a)
+```
 
 6. Dado los siguientes vectores, muestre el código en R necesario para declarar y calcular el promedio, deviación estándar,
 mediana, moda y sumatoria total para los siguientes vectores:
 
-x <- c(8,7,6,5)
-y <- c(3,3, 3, 3, 3, 3, 3, 3, 2, 2)
+```{r}
+x <- c(8, 7, 6, 5)
+y <- c(3, 3, 3, 3, 3, 3, 3, 3, 2, 2)
 z <- c(1, 1.75, 2.5, 3.25, 4)
 
 summary(x)
@@ -60,3 +74,40 @@ summary(z)
 sum(x)
 sum(y)
 sum(z)
+```
+
+7. Sabemos que para sumar vectores estos deben tener la misma
+longitud. Sin embargo R trabaja de manera distinta. Defina los
+vectores x = (1, 2, 3, 4, 5, 6), y = (7, 8), z = (9, 10, 11, 12).
+
+12) Calcula:
+a. x + x
+b. x + y.
+c. Responda ¿Qué ha hecho R?
+Sumo los valores dentro de los arreglos, pero en el caso de b, tomo los valores y sumo todos los impares con los impares
+y los pares con los pares.
+
+```{R}
+x <- c(1, 2, 3, 4, 5, 6) 
+y <- c(7, 8) 
+z <- c(9, 10, 11, 12)
+
+a <- x+x 
+b <- x+y
+
+print(a)
+print(b)
+```
+
+8. Dada la variable string <- "Hola Mundo", escriba una instrucción
+en R que devuelva la siguiente salida:
+[[1]]
+[1] "Hola"
+[[2]]
+[1] "Mundo"
+
+```{r}
+string <- "Hola Mundo"
+palabras <- strsplit(string," ")[[1]]
+print(palabras)
+```
