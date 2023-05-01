@@ -39,4 +39,24 @@ vector1 <- c(1,3,5,7)
 vectors <- seq(1,7,2)
 vectors
 
-5. 
+5. Si b <- list(a=1:10, c="Hola", d="XX"), escriba una expresión
+en R que devuelva todos los elementos de la lista excepto los
+elementos 4,6,7,8 del vector a.
+
+b = list(a=1:10, c="Hola", d="XX")
+b$a = b$a[-c(4,6:7)]
+print(b$a)
+
+6. Dado los siguientes vectores, muestre el código en R necesario para declarar y calcular el promedio, deviación estándar,
+mediana, moda y sumatoria total para los siguientes vectores:
+
+x <- c(8,7,6,5)
+y <- c(3,3, 3, 3, 3, 3, 3, 3, 2, 2)
+z <- c(1, 1.75, 2.5, 3.25, 4)
+
+summary(x)
+summary(y)
+summary(z)
+sum(x)
+sum(y)
+sum(z)
