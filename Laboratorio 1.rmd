@@ -6,7 +6,7 @@ output: github_document
 1. ¿Cómo generaría un arreglo aleatorio de 250 elementos con los
 colores primarios?
 
-```{language}
+```{R}
 colores_primarios <- c("rojo", "azul", "amarillo")
 arreglo_colores <- sample(colores_primarios, 250, replace = TRUE)
 print(arreglo_colores)
