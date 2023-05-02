@@ -1,0 +1,25 @@
+---
+title: "Untitled"
+output: github_document
+---
+
+```{R}
+rm(list=ls())
+```
+
+```{R}
+datos <- load("Data.RData")
+print(datos)
+```
+
+1. ¿Qué tipo de dato es info_estudiantes?
+
+```{R}
+class(datos)
+```
+
+2. ¿Cuantos elementos tiene info_estudiantes?
+
+```{R}
+count.fields("Data.RData")
+```
