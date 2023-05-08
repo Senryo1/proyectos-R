@@ -10,6 +10,7 @@ rm(list=ls())
 ```{R}
 datos <- load("Data.RData")
 print(datos)
+names(info_estudiantes)
 ```
 
 1. ¿Qué tipo de dato es info_estudiantes?
@@ -22,4 +23,31 @@ class(datos)
 
 ```{R}
 count.fields("Data.RData")
+```
+
+3. ¿Qué representa cada uno de los elementos de info_estudiantes?
+```{r}
+dataset <- data.frame(años = info_estudiantes[["carnet"]], prom = info_estudiantes[["promedio"]], tip =info_estudiantes[["tipo"]] )
+print(dataset)
+```
+4. ¿Cuál es la media de los estudiantes ingresados en el año 2019?
+```{r}
+dataset1 <- data.frame(años = substr(info_estudiantes[["carnet"]], start = 1, stop = 2), prom = info_estudiantes[["promedio"]], tip =info_estudiantes[["tipo"]] )
+data1 = dataset1[dataset1$años==19,2]
+mean(data1)
+```
+5. ¿Cuál es la suma de desviación estándar de los estudiantes que
+ingresaron en el año 2016 y 2018?
+```{r}
+data2 = dataset1[dataset1$años==16,2]
+data3 = dataset1[dataset1$años==18,2]
+medias = sd(data2)+sd(data3)
+medias
+```
+
+6. ¿Cuál es el mínimo de notas de aquellos estudiantes donde su
+carnet termina con los números 45 a 48?
+```{r}
+notas_condicion <- subset(dataset[["prom"]], substr(dataset[["carnet"]], -2,2) %in% c("45", "46", "47", "48"))
+print(notas_condicion)
 ```
