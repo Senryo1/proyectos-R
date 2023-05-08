@@ -13,41 +13,59 @@ print(datos)
 names(info_estudiantes)
 ```
 
-1. ¿Qué tipo de dato es info_estudiantes?
+# 1. ¿Qué tipo de dato es info_estudiantes?
 
 ```{R}
-class(datos)
+class(info_estudiantes)
 ```
+#Tipo estudiante es de tipo list, tambien se ve en la pestaña Enviroment
 
-2. ¿Cuantos elementos tiene info_estudiantes?
+# 2. ¿Cuantos elementos tiene info_estudiantes?
 
 ```{R}
 count.fields("Data.RData")
 ```
+# Este muestra que son 24,000 elementos, ya que son 8000 registros en 3 columnas que tambien se pueden ver en la pestaña enviroment
 
-3. ¿Qué representa cada uno de los elementos de info_estudiantes?
+# 3. ¿Qué representa cada uno de los elementos de info_estudiantes?
 ```{r}
-dataset <- data.frame(años = info_estudiantes[["carnet"]], prom = info_estudiantes[["promedio"]], tip =info_estudiantes[["tipo"]] )
+dataset <- data.frame(carnet = info_estudiantes[["carnet"]], promedio = info_estudiantes[["promedio"]], tipo =info_estudiantes[["tipo"]] )
 print(dataset)
 ```
-4. ¿Cuál es la media de los estudiantes ingresados en el año 2019?
+# Muestran los datos de una base de datos de estudiantes los cuales son: Carnet, promedio y tipo de estudiante o clase de estudiante
+
+# 4. ¿Cuál es la media de los estudiantes ingresados en el año 2019?
 ```{r}
 dataset1 <- data.frame(años = substr(info_estudiantes[["carnet"]], start = 1, stop = 2), prom = info_estudiantes[["promedio"]], tip =info_estudiantes[["tipo"]] )
 data1 = dataset1[dataset1$años==19,2]
 mean(data1)
 ```
-5. ¿Cuál es la suma de desviación estándar de los estudiantes que
-ingresaron en el año 2016 y 2018?
+# La media de estos estudiantes es una nota de 70.86 promedio
+
+# 5.¿Cuál es la suma de desviación estándar de los estudiantes que ingresaron en el año 2016 y 2018?
 ```{r}
 data2 = dataset1[dataset1$años==16,2]
 data3 = dataset1[dataset1$años==18,2]
 medias = sd(data2)+sd(data3)
 medias
 ```
+# La suma de las 2 desviaciones da un total de 35.13 puntos
 
-6. ¿Cuál es el mínimo de notas de aquellos estudiantes donde su
-carnet termina con los números 45 a 48?
+# 6.¿Cuál es el mínimo de notas de aquellos estudiantes donde su carnet termina con los números 45 a 48?
 ```{r}
-notas_condicion <- subset(dataset[["prom"]], substr(dataset[["carnet"]], -2,2) %in% c("45", "46", "47", "48"))
-print(notas_condicion)
+min(dataset[(substr(dataset$carnet,7, 8) == "45") | (substr(dataset$carnet,7, 8) == "48") ,]$prom)
 ```
+# El minimo de los estudiantes delimitados por la terminacion de su carnet en los numeros del 45 al 48 es de 40 puntos
+
+# 7. ¿Cuál es la probabilidad de que un estudiante tipo A tenga una nota mayor a 85?
+```{r}
+100*nrow( dataset[(dataset$tipo == "A") & (dataset$promedio >85 ),])/8000
+```
+#La probabilidad de que un estudiante de tipo A saque un promedio mayor a 85 es de 6.13% (6.125%)
+
+# 8. ¿Cuál es la probabilidad de que un estudiante tipo C haya ingresado en el año 2017 o 2019?
+```{r}
+100*nrow( dataset[(dataset$tipo == "C") & (substr(dataset$carnet,1, 2) == "17") | (substr(dataset$carnet,1, 2) == "19"),])/8000
+```
+# La probabilidad de que un estudiante tipo C haya ingresado entre ese intervalo de años es de 30.68% (30.675%)
+ 
