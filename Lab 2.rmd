@@ -1,0 +1,346 @@
+---
+title: "Lab 2"
+output: github_document
+---
+```{r}
+install.packages("ggplot2")
+
+library(lubridate)
+library(dplyr)
+```
+## 1. Cree un conjunto de columnas nuevas: día, mes, año, hora y minutos a partir de la comlumna datetime, para esto investigue como puede “desarmar” la variable datetime utilizando lubridate y mutate. 
+
+
+```{r setup, include=FALSE}
+arc <- read.csv("dataset.csv")
+```
+
+
+```{r}
+dat <- data.frame(arc)
+dat
+```
+
+```{r}
+dat$dteday <- ymd(dat$dteday)
+```
+
+
+
+```{r}
+dat <- dat %>%
+  mutate(
+    dia = day(dteday),
+    mes = month(dteday),
+    año = year(dteday),
+  )
+```
+
+
+
+```{r pressure, echo=FALSE}
+dat$hora =   dat$hr
+```
+
+```{r}
+head(dat)
+```
+```{r}
+summary(dat)
+```
+
+## 2. ¿Qué mes es el que tiene la mayor demanda? Muestre una tabla y una gráfica
+
+```{r}
+dat_mes_año <- dat %>% 
+                  select(año, mes, cnt) %>% 
+                  group_by(año, mes) %>%
+                  summarize(registros = sum(cnt))
+print(dat_mes_año)
+```
+```{r}
+dat_mes_año %>% filter(registros == (dat_mes_año$registros %>% max()))
+```
+
+```{r}
+dat_mes_año <- dat_mes_año %>%
+  mutate(año_mes = as.Date(paste(año, mes, "01", sep = "-"), format = "%Y-%m-%d"))
+```
+
+
+
+```{r}
+library(ggplot2)
+dat_mes_año %>%
+  ggplot(aes(x = año_mes, y = registros)) +
+  geom_col(fill = "green") +
+  geom_text(aes(label = registros), color = "black")+
+  scale_x_date(date_breaks = "1 month", date_labels = "%Y-%m") +
+  labs(title = "Demanda total de alquiler de bicicletas por mes",
+       x = "Mes y Año",
+       y = "Demanda") +
+  theme_minimal() 
+```
+## 3. ¿Qué rango de hora es la de mayor demanda? Muestre una tabla y una gráfica
+
+```{r}
+dat_mes_año_hora <- dat %>% 
+                  select(hora, cnt) %>% 
+                  group_by(hora) %>%
+                  summarize(demanda = sum(cnt))
+print(dat_mes_año_hora)
+```
+
+```{r}
+library(ggplot2)
+dat_mes_año_hora %>%
+  ggplot(aes(x = hora, y = demanda)) +
+  geom_col(fill = "green") +
+  geom_text(aes(label = demanda), color = "black")+
+  labs(title = "Demanda total de alquiler de bicicletas por hora",
+       x = "hora",
+       y = "Demanda total") +
+  theme_minimal() 
+```
+
+```{r}
+dat_mes_año_hora %>% filter(demanda == (dat_mes_año_hora$demanda %>% max()))
+```
+
+## 4. ¿Qué temporada es la mas alta? Muestre una tabla.
+
+
+```{r}
+dat_temporada = dat %>% 
+                  select(season, cnt) %>% 
+                  group_by(season) %>%
+                  summarize(demanda = sum(cnt))
+print(dat_temporada)
+```
+```{r}
+dat_temporada %>% filter(demanda == max(demanda))
+```
+## 5. ¿A que temperatura disminuye la demanda? Muestre una gráfica para analizar y dar su respuesta.
+
+```{r}
+dat_temperatura = dat %>% 
+                  select(temp,cnt) %>% 
+                  group_by(temp) %>%
+                  summarize(demanda = sum(cnt))
+```
+
+```{r}
+dat_temperatura %>%
+  ggplot(aes(x = as.factor(temp), y = demanda)) +
+  geom_bar(stat = "identity", fill = "green") +
+  geom_text(aes(label = demanda), vjust = -0.5, color = "black") +
+  labs(title = "Cantidad de registros por hora",
+       x = "Temperatura",
+       y = "Registros") +
+  theme_minimal()
+```
+
+
+```{r}
+dat_temperatura %>% arrange(demanda) %>% head(10)
+```
+
+```{r}
+dat_temperatura %>% arrange(demanda) %>% head(10)  %>%
+  ggplot(aes(x = as.factor(temp), y = demanda)) +
+  geom_bar(stat = "identity", fill = "green") +
+  geom_text(aes(label = demanda), vjust = -0.5, color = "black") +
+  labs(title = "Cantidad de registros por hora",
+       x = "Temperatura",
+       y = "Registros") +
+  theme_minimal()
+```
+# la demanda deciende en casos de temperaturas muy altas o muy bajas
+
+## 6. ¿A que humedad disminuye la demanda? Muestre una gráfica para analizar y dar su respuesta.
+
+
+```{r}
+dat_humedad = dat %>% 
+                  select(hum,cnt) %>% 
+                  group_by(hum) %>%
+                  summarize(demanda = sum(cnt))
+```
+
+```{r}
+dat_humedad$demanda %>% min()
+```
+
+```{r}
+dat_humedad %>% filter(demanda == min(demanda)) 
+```
+
+
+
+```{r}
+dat_humedad %>%
+  ggplot(aes(x = as.factor(hum), y = demanda)) +
+  geom_bar(stat = "identity", fill = "green") +
+  geom_text(aes(label = demanda), vjust = -0.5, color = "black") +
+  labs(title = "Cantidad de registros por hora",
+       x = "Humedad",
+       y = "Registros") +
+  theme_minimal()
+```
+
+```{r}
+dat_humedad %>% arrange(demanda) %>% head(10)  %>%
+  ggplot(aes(x = as.factor(hum), y = demanda)) +
+  geom_bar(stat = "identity", fill = "green") +
+  geom_text(aes(label = demanda), vjust = -0.5, color = "black") +
+  labs(title = "Cantidad de registros por hora",
+       x = "Humedad",
+       y = "Registros") +
+  theme_minimal()
+```
+# En este caso tambien la demanda desciende si son casos de humedad muy bajos o altos
+
+## 7. ¿Que condiciones climáticas serian ideales para nuestra demanda? (considere una función de densidad bivariable para la temperatura y la humedad)
+
+```{r}
+dat_humedad_temperatura <- dat %>% 
+                  select(hum, temp, cnt) %>% 
+                  group_by(hum, temp) %>%
+                  summarize(demanda = sum(cnt))
+```
+
+```{r}
+dat_humedad_temperatura %>% 
+  ggplot(aes(x = temp, y = hum, fill = factor(demanda))) +  
+  geom_tile() +
+  scale_fill_discrete() +  
+  labs(title = "Grafica de contorno: Demanda de alquiler de bicicletas",
+       x = "Temperatura",
+       y = "Humedad",
+       fill = "Demanda") +
+  theme_minimal()
+```
+
+
+
+```{r}
+dat_humedad_temperatura %>% ggplot( aes(x = temp, y = hum, fill = demanda)) +
+  geom_density_2d() +
+  labs(title = "Densidad Bivariable: Demanda de alquiler de bicicletas",
+       x = "Temperatura",
+       y = "Humedad",
+       fill = "Demanda") +
+  theme_minimal()
+```
+
+
+# podemos ver que con una temperatura arriba  0.75 y una humedad arriba de 0.75 en en los dos casos por debajo de 90
+
+# 8. Mueste una gráfica de la densidad de rentas.
+
+```{r}
+dat %>% ggplot( aes(x = cnt)) +
+  geom_density(fill = "green") +
+  labs(title = "Densidad de Rentas",
+       x = "Cantidad de Rentas",
+       y = "Densidad") +
+  theme_minimal()
+```
+# 9. ¿En promedio de personas que rentan bicicletas y están registradas?
+
+```{r}
+promedio_personas <- dat %>%
+  filter(registered > 0) %>%
+  summarise(promedio = mean(cnt))
+promedio_personas$promedio
+```
+# 10. Determine la mediana de personas que rentan bicicletas y no están registradas.
+
+```{r}
+mediana_personas_no_registradas <- dat %>%
+  filter(registered == 0) %>%
+  summarise(mediana = median(cnt))
+mediana_personas_no_registradas$mediana
+```
+# 11. Deterimne la renta total, renta promedio por cada tipo de estación.
+
+
+```{r}
+renta_total <- sum(dat$cnt)
+renta_promedio <- mean(dat$cnt)
+print(paste("Renta total:", renta_total))
+print(paste("Renta promedio:", renta_promedio))
+```
+# 12. Determine y muestre una gráfica de barras la cantidad de rentas por tipo de temporada.
+
+
+```{r}
+rentas_por_temporada <- dat %>%
+  group_by(season) %>%
+  summarise(rentas = sum(cnt))
+ggplot(rentas_por_temporada, aes(x = factor(season), y = rentas)) +
+  geom_bar(stat = "identity", fill = "green") +
+  labs(title = "Cantidad de rentas por temporada",
+       x = "Temporada",
+       y = "Cantidad de rentas") +
+  theme_minimal() +
+  geom_text(aes(label = rentas), vjust = -0.5, color = "black")
+```
+# 13. Muestre una gráfica de la densidad por hora.
+
+
+```{r}
+dat %>% ggplot( aes(x = hr)) +
+  geom_density(fill = "green") +
+  labs(title = "Densidad de rentas por hora",
+       x = "Hora del día",
+       y = "Densidad") +
+  theme_minimal() +
+  scale_x_continuous(breaks = seq(0, 23, by = 2), labels = c("0", "2", "4", "6", "8", "10", "12", "14", "16", "18", "20", "22"))
+```
+# 14. Muestre una gráfica de barras por día del mes como eje x y la cantidad total de alquileres como el eje Y.
+
+
+```{r}
+# se calculan los alquileres promedio por dia 
+rentas_promedio_por_dia <- dat %>%
+  group_by(dia) %>%
+  summarise(promedio_alquileres = mean(cnt))
+# se ordena de forma ascendente
+rentas_promedio_por_dia <- rentas_promedio_por_dia[order(rentas_promedio_por_dia$dia), ]
+# Creacion de las etiquetas
+etiquetas <- paste0(round(rentas_promedio_por_dia$promedio_alquileres))
+# Graficado de los datos
+ggplot(rentas_promedio_por_dia, aes(x = dia, y = promedio_alquileres)) +
+  geom_bar(stat = "identity", fill = "green") +
+  labs(title = "Cantidades promedio de alquileres por día del mes",
+       x = "Día del mes",
+       y = "Cantidad promedio de alquileres") +
+  theme_minimal() +
+  geom_text(aes(label = etiquetas), vjust = -0.5, color = "black")
+```
+
+# Muestre una serie temporal (gráfica) con el tiempo (mes-dia-año) como eje de tiempo y la cantidad de alquieleres como eje Y.
+
+```{r}
+alquileres_por_fecha <- dat %>%
+  group_by(dteday) %>%
+  summarise(cantidad_alquileres = sum(cnt))
+ggplot(alquileres_por_fecha, aes(x = dteday, y = cantidad_alquileres)) +
+  geom_line(color = "green") +
+  labs(title = "Serie temporal de alquileres",
+       x = "Fecha",
+       y = "Cantidad de alquileres") +
+  theme_minimal()
+```
+# 16. Muestre una gráfica de puntos que relaciones la temperatura como ejer X y la humedad como eje Y.
+
+
+```{r}
+ggplot(dat, aes(x = temp, y = hum)) +
+  geom_point(color = "green") +
+  labs(title = "Relación entre temperatura y humedad",
+       x = "Temperatura",
+       y = "Humedad") +
+  theme_minimal()
+```
