@@ -1,0 +1,59 @@
+---
+title: "Lab 3"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+library(ggplot2)
+archivov<-read.csv("Admisions.csv")
+datos<-data.frame(archivov)
+datos_ord<-datos[order(datos$GRE.Score, decreasing = TRUE),]
+datos_ord
+```
+
+```{r}
+dat2<-data.frame(datos$GRE.Score,datos$University.Rating)
+dat2
+```
+
+#hacemos el calculo de los estimadores b0 y b1
+```{r}
+# Calcular los estimadores b0 y b1 de forma manual
+n <- nrow(dat2)  # Número de observaciones
+x <- dat2$datos.GRE.Score     # Variable independiente
+y <- dat2$datos.University.Rating      # Variable dependiente
+
+# Calcular las sumas necesarias
+sum_x <- sum(x)
+sum_y <- sum(y)
+sum_x2 <- sum(x^2)
+sum_xy <- sum(x * y)
+
+# Calcular los estimadores
+b1 <- (n * sum_xy - sum_x * sum_y) / (n * sum_x2 - sum_x^2)
+b0 <- (sum_y - b1 * sum_x) / n
+
+# Crear un arreglo con los valores de los estimadores
+estimadores <- c(b0, b1)
+
+# Imprimir los valores de los estimadores
+print(estimadores)
+
+```
+#El valor del coeficiente de determinación R cuadrado del modelo.
+```{r}
+# Calcular el coeficiente de determinación manualmente
+y_pred <- b0 + b1 * x  # Valores predichos por el modelo
+ss_total <- sum((y - mean(y))^2)  # Suma de cuadrados total
+ss_residual <- sum((y - y_pred)^2)  # Suma de cuadrados residual
+r_squared <- 1 - (ss_residual / ss_total)  # Coeficiente de determinación
+
+# Imprimir el coeficiente de determinación
+print(r_squared)
+```
+
+
