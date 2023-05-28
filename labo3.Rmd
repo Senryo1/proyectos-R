@@ -22,10 +22,10 @@ dat2
 
 #hacemos el calculo de los estimadores b0 y b1
 ```{r}
-# Calcular los estimadores b0 y b1 de forma manual
+# Calculo de los estimadores de forma manual
 n <- nrow(dat2)  # Número de observaciones
-x <- dat2$datos.GRE.Score     # Variable independiente
-y <- dat2$datos.University.Rating      # Variable dependiente
+x <- dat2$datos.University.Rating     # Variable independiente
+y <- dat2$datos.GRE.Score      # Variable dependiente
 
 # Calcular las sumas necesarias
 sum_x <- sum(x)
@@ -46,14 +46,35 @@ print(estimadores)
 ```
 #El valor del coeficiente de determinación R cuadrado del modelo.
 ```{r}
-# Calcular el coeficiente de determinación manualmente
+# Calculo del coeficiente manual
 y_pred <- b0 + b1 * x  # Valores predichos por el modelo
 ss_total <- sum((y - mean(y))^2)  # Suma de cuadrados total
 ss_residual <- sum((y - y_pred)^2)  # Suma de cuadrados residual
 r_squared <- 1 - (ss_residual / ss_total)  # Coeficiente de determinación
 
-# Imprimir el coeficiente de determinación
+# Mostramos los valores
 print(r_squared)
 ```
+#Un arreglo con los valores de los residuos
+```{r}
+# Calculo de residuos
+residuos <- y - y_pred
+
+# Mostrar valores
+print(residuos)
+```
+#Una gráfica con la nube de puntos y la recta de regresión del modelo.
+```{r}
+# Crear el gráfico con la nube de puntos y la recta de regresión
+grafico <- ggplot(dat2, aes(x = x, y = y)) +
+  geom_point() +  # Nube de puntos
+  geom_abline(intercept = b0, slope = b1, color = "red") +  # Recta de regresión
+  labs(x = "Variable Independiente", y = "Variable Dependiente", title = "Nube de Puntos y Recta de Regresión")  # Etiquetas de los ejes y título
+
+# Imprimir el gráfico
+print(grafico)
+```
+
+
 
 
