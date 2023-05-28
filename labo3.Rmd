@@ -74,6 +74,62 @@ grafico <- ggplot(dat2, aes(x = x, y = y)) +
 # Imprimir el gráfico
 print(grafico)
 ```
+#Parte 2
+
+# Realice un análisis estadístico sobre todas las variables del dataset, recuerde que pude usar la función summary()
+```{r}
+summary(datos)
+```
+#Realice una gráfica de densidad para cada una de las variables  numéricas en el dataset: GRE.Score, TOEFEL.Score, CGPA y Chance of Admit
+```{r}
+# Realizamos la gráfica de densidad para GRE.Score
+plot(density(datos$GRE.Score), main="Densidad de GRE.Score")
+
+# Realizamos la gráfica de densidad para TOEFL.Score
+plot(density(datos$TOEFL.Score), main="Densidad de TOEFL.Score")
+
+# Realizamos la gráfica de densidad para CGPA
+plot(density(datos$CGPA), main="Densidad de CGPA")
+
+# Realizamos la gráfica de densidad para Chance.of.Admit
+plot(density(datos$Chance.of.Admit), main="Densidad de Chance.of.Admit")
+```
+# Realice una gráfica de correlación entre las variables del inciso anterior.
+```{r}
+# Seleccionamos las variables numéricas
+num_vars <- datos[, c("GRE.Score", "TOEFL.Score", "CGPA", "Chance.of.Admit")]
+
+# Realizamos la gráfica de correlación
+pairs(num_vars)
+```
+# Realice comentarios sobre el análisis estadístico de las variables  numéricas y la gráfica de correlación
+#
+
+# Realice un scatter plot (nube de puntos) de todas las variables numéricas contra la variable Chance of Admit.
+```{r}
+library(reshape2)
+library(dplyr)
+# Seleccionar las variables numéricas y la variable de interés
+num_vars <- c("GRE.Score", "TOEFL.Score", "University.Rating", "SOP", "LOR", "CGPA","Research")
+target_var <- "Chance.of.Admit"
+
+# Transformar el data frame en formato adecuado para el gráfico
+df_melted <- reshape2::melt(select(datos, all_of(c(num_vars, target_var))), id.vars = target_var)
+
+# Crear el scatter plot de todas las variables numéricas contra la variable de interés
+grafico <- ggplot(df_melted, aes(x = value, y = df_melted[[target_var]])) +
+  geom_point(aes(color = variable), size = 3) +
+  labs(x = "Variable", y = "Chance of Admit") +
+  ggtitle("Scatter Plot de Variables Numéricas vs Chance of Admit") +
+  theme_minimal()
+
+# Imprimir el gráfico
+print(grafico)
+```
+
+
+
+
 
 
 
