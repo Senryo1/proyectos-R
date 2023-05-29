@@ -1,0 +1,172 @@
+---
+title: "Labo 3"
+author: "René Hernández"
+date: "'r Sys.Date()'"
+output: pdf_document
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+library(ggplot2)
+archivov<-read.csv("Admisions.csv")
+datos<-data.frame(archivov)
+datos_ord<-datos[order(datos$GRE.Score, decreasing = TRUE),]
+datos_ord
+```
+
+```{r}
+dat2<-data.frame(datos$GRE.Score,datos$University.Rating)
+dat2
+```
+
+#hacemos el calculo de los estimadores b0 y b1
+```{r}
+# Calculo de los estimadores de forma manual
+n <- nrow(dat2)  # Número de observaciones
+x <- dat2$datos.University.Rating     # Variable independiente
+y <- dat2$datos.GRE.Score      # Variable dependiente
+
+# Calcular las sumas necesarias
+sum_x <- sum(x)
+sum_y <- sum(y)
+sum_x2 <- sum(x^2)
+sum_xy <- sum(x * y)
+
+# Calcular los estimadores
+b1 <- (n * sum_xy - sum_x * sum_y) / (n * sum_x2 - sum_x^2)
+b0 <- (sum_y - b1 * sum_x) / n
+
+# Crear un arreglo con los valores de los estimadores
+estimadores <- c(b0, b1)
+
+# Imprimir los valores de los estimadores
+print(estimadores)
+
+```
+#El valor del coeficiente de determinación R cuadrado del modelo.
+```{r}
+# Calculo del coeficiente manual
+y_pred <- b0 + b1 * x  # Valores predichos por el modelo
+ss_total <- sum((y - mean(y))^2)  # Suma de cuadrados total
+ss_residual <- sum((y - y_pred)^2)  # Suma de cuadrados residual
+r_squared <- 1 - (ss_residual / ss_total)  # Coeficiente de determinación
+
+# Mostramos los valores
+print(r_squared)
+```
+#Un arreglo con los valores de los residuos
+```{r}
+# Calculo de residuos
+residuos <- y - y_pred
+
+# Mostrar valores
+print(residuos)
+```
+#Una gráfica con la nube de puntos y la recta de regresión del modelo.
+```{r}
+# Crear el gráfico con la nube de puntos y la recta de regresión
+grafico <- ggplot(dat2, aes(x = x, y = y)) +
+  geom_point() +  # Nube de puntos
+  geom_abline(intercept = b0, slope = b1, color = "red") +  # Recta de regresión
+  labs(x = "Variable Independiente", y = "Variable Dependiente", title = "Nube de Puntos y Recta de Regresión")  # Etiquetas de los ejes y título
+
+# Imprimir el gráfico
+print(grafico)
+```
+#Parte 2
+
+# Realice un análisis estadístico sobre todas las variables del dataset, recuerde que pude usar la función summary()
+```{r}
+summary(datos)
+```
+#Realice una gráfica de densidad para cada una de las variables  numéricas en el dataset: GRE.Score, TOEFEL.Score, CGPA y Chance of Admit
+```{r}
+# Realizamos la gráfica de densidad para GRE.Score
+plot(density(datos$GRE.Score), main="Densidad de GRE.Score")
+
+# Realizamos la gráfica de densidad para TOEFL.Score
+plot(density(datos$TOEFL.Score), main="Densidad de TOEFL.Score")
+
+# Realizamos la gráfica de densidad para CGPA
+plot(density(datos$CGPA), main="Densidad de CGPA")
+
+# Realizamos la gráfica de densidad para Chance.of.Admit
+plot(density(datos$Chance.of.Admit), main="Densidad de Chance.of.Admit")
+```
+# Realice una gráfica de correlación entre las variables del inciso anterior.
+```{r}
+for (var in colnames(datos)) {
+  p <- ggplot(datos, aes(x = !!sym(var), y = Chance.of.Admit)) +
+    geom_point() +
+    labs(title = paste("Gráfica", var, "vs Chance of Admit"),
+         x = var,
+         y = "Chance of Admit")
+  print(p)
+}
+```
+# Realice comentarios sobre el análisis estadístico de las variables  numéricas y la gráfica de correlación
+
+Podemos ver que en general los puntajes de GRE y TOEFL son bastante altos dado que su media nos permite ver que la nota media es muy cercana a los niveles superiores,incluso tomando en cuenta los aspectos de los quartiles. Las graficas tambien nos permiten ver que el GCPA tiene una correlacion muy grande con chance of admit.
+
+# Realice un scatter plot (nube de puntos) de todas las variables numéricas contra la variable Chance of Admit.
+```{r}
+library(reshape2)
+library(dplyr)
+# Seleccionar las variables numéricas y la variable de interés
+num_vars <- c("GRE.Score", "TOEFL.Score", "University.Rating", "SOP", "LOR", "CGPA","Research")
+target_var <- "Chance.of.Admit"
+
+# Transformar el data frame en formato adecuado para el gráfico
+df_melted <- reshape2::melt(select(datos, all_of(c(num_vars, target_var))), id.vars = target_var)
+
+# Crear el scatter plot de todas las variables numéricas contra la variable de interés
+grafico <- ggplot(df_melted, aes(x = value, y = df_melted[[target_var]])) +
+  geom_point(aes(color = variable), size = 3) +
+  labs(x = "Variable", y = "Chance of Admit") +
+  ggtitle("Scatter Plot de Variables Numéricas vs Chance of Admit") +
+  theme_minimal()
+
+# Imprimir el gráfico
+print(grafico)
+```
+
+# Utilizando la función train y trainControl para crear un crossvalidation y le permita evaluar los siguientes modelos:
+#• Chance of Admit ~ TOEFEL.Score.
+#• Chance of Admit ~ CGPA.
+#• Chance of Admit ~ GRE.Score.
+#• Chance of Admit ~ TOEFEL.Score + CGPA.
+#• Chance of Admit ~ TOEFEL.Score + GRE.Score.
+#• Chance of Admit ~ GRE.Score + CGPA.
+#• Chance of Admit ~ TOEFEL.Score + CGPA + GRE.Score.
+#Posteriormente cree una lista ordenando de mejor a peor cual es el 
+#mejor modelo en predicción, recuerde que es necesario caclular el 
+#RMSE para poder armar correctamente la lista.
+```{r}
+library(caret)
+# Crear el control de entrenamiento con 10-fold cross-validation
+control <- trainControl(method = "cv", number = 10)
+
+models <- list(
+  Chance_TOEFL = train(Chance.of.Admit ~ TOEFL.Score, data = datos, method = "lm", trControl = control),
+  Chance_CGPA = train(Chance.of.Admit ~ CGPA, data = datos, method = "lm", trControl = control),
+  Chance_GRE = train(Chance.of.Admit ~ GRE.Score, data = datos, method = "lm", trControl = control),
+  Chance_TOEFL_CGPA = train(Chance.of.Admit ~ TOEFL.Score + CGPA, data = datos, method = "lm", trControl = control),
+  Chance_TOEFEL_GRE = train(Chance.of.Admit ~ TOEFL.Score + GRE.Score, data = datos, method = "lm", trControl = control),
+  Chance_GRE_CGPA = train(Chance.of.Admit ~ GRE.Score + CGPA, data = datos, method = "lm", trControl = control),
+  Chance_TOEFL_CGPA_GRE = train(Chance.of.Admit ~ TOEFL.Score + CGPA + GRE.Score, data = datos, method = "lm", trControl = control)
+)
+rmse <- sapply(models, function(model) RMSE(predict(model), model$obs))
+mejor_a_peor <- order(rmse)
+lista_modelos <- names(models)[mejor_a_peor]
+lista_modelos[1]
+```
+
+
+
+
+
+
+
