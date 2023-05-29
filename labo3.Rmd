@@ -1,6 +1,8 @@
 ---
-title: "Lab 3"
-output: html_notebook
+title: "Labo 3"
+author: "René Hernández"
+date: "'r Sys.Date()'"
+output: pdf_document
 ---
 
 This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
@@ -96,14 +98,18 @@ plot(density(datos$Chance.of.Admit), main="Densidad de Chance.of.Admit")
 ```
 # Realice una gráfica de correlación entre las variables del inciso anterior.
 ```{r}
-# Seleccionamos las variables numéricas
-num_vars <- datos[, c("GRE.Score", "TOEFL.Score", "CGPA", "Chance.of.Admit")]
-
-# Realizamos la gráfica de correlación
-pairs(num_vars)
+for (var in colnames(datos)) {
+  p <- ggplot(datos, aes(x = !!sym(var), y = Chance.of.Admit)) +
+    geom_point() +
+    labs(title = paste("Gráfica", var, "vs Chance of Admit"),
+         x = var,
+         y = "Chance of Admit")
+  print(p)
+}
 ```
 # Realice comentarios sobre el análisis estadístico de las variables  numéricas y la gráfica de correlación
-#
+
+Podemos ver que en general los puntajes de GRE y TOEFL son bastante altos dado que su media nos permite ver que la nota media es muy cercana a los niveles superiores,incluso tomando en cuenta los aspectos de los quartiles. Las graficas tambien nos permiten ver que el GCPA tiene una correlacion muy grande con chance of admit.
 
 # Realice un scatter plot (nube de puntos) de todas las variables numéricas contra la variable Chance of Admit.
 ```{r}
@@ -127,6 +133,36 @@ grafico <- ggplot(df_melted, aes(x = value, y = df_melted[[target_var]])) +
 print(grafico)
 ```
 
+# Utilizando la función train y trainControl para crear un crossvalidation y le permita evaluar los siguientes modelos:
+#• Chance of Admit ~ TOEFEL.Score.
+#• Chance of Admit ~ CGPA.
+#• Chance of Admit ~ GRE.Score.
+#• Chance of Admit ~ TOEFEL.Score + CGPA.
+#• Chance of Admit ~ TOEFEL.Score + GRE.Score.
+#• Chance of Admit ~ GRE.Score + CGPA.
+#• Chance of Admit ~ TOEFEL.Score + CGPA + GRE.Score.
+#Posteriormente cree una lista ordenando de mejor a peor cual es el 
+#mejor modelo en predicción, recuerde que es necesario caclular el 
+#RMSE para poder armar correctamente la lista.
+```{r}
+library(caret)
+# Crear el control de entrenamiento con 10-fold cross-validation
+control <- trainControl(method = "cv", number = 10)
+
+models <- list(
+  Chance_TOEFL = train(Chance.of.Admit ~ TOEFL.Score, data = datos, method = "lm", trControl = control),
+  Chance_CGPA = train(Chance.of.Admit ~ CGPA, data = datos, method = "lm", trControl = control),
+  Chance_GRE = train(Chance.of.Admit ~ GRE.Score, data = datos, method = "lm", trControl = control),
+  Chance_TOEFL_CGPA = train(Chance.of.Admit ~ TOEFL.Score + CGPA, data = datos, method = "lm", trControl = control),
+  Chance_TOEFEL_GRE = train(Chance.of.Admit ~ TOEFL.Score + GRE.Score, data = datos, method = "lm", trControl = control),
+  Chance_GRE_CGPA = train(Chance.of.Admit ~ GRE.Score + CGPA, data = datos, method = "lm", trControl = control),
+  Chance_TOEFL_CGPA_GRE = train(Chance.of.Admit ~ TOEFL.Score + CGPA + GRE.Score, data = datos, method = "lm", trControl = control)
+)
+rmse <- sapply(models, function(model) RMSE(predict(model), model$obs))
+mejor_a_peor <- order(rmse)
+lista_modelos <- names(models)[mejor_a_peor]
+lista_modelos[1]
+```
 
 
 
